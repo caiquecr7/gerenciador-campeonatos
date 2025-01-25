@@ -5,6 +5,7 @@ using GerenciadorCampeonatos.Domain.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GerenciadorCampeonatos.Domain.Migrations
 {
     [DbContext(typeof(CampeonatosDbContext))]
-    partial class CampeonatosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250125215253_AdicionandoSchema")]
+    partial class AdicionandoSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

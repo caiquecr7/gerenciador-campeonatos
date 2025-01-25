@@ -14,6 +14,8 @@ namespace GerenciadorCampeonatos.Domain.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("futebol");
+
             modelBuilder.ApplyConfiguration(new TeamMap());
             modelBuilder.ApplyConfiguration(new MatchMap());
             modelBuilder.ApplyConfiguration(new PlayerMap());

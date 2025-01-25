@@ -5,6 +5,7 @@ using GerenciadorCampeonatos.Domain.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,13 +13,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GerenciadorCampeonatos.Domain.Migrations
 {
     [DbContext(typeof(CampeonatosDbContext))]
-    partial class CampeonatosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250125215612_updateSchema")]
+    partial class updateSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("futebol")
+                .HasDefaultSchema("dbo")
                 .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -65,7 +68,7 @@ namespace GerenciadorCampeonatos.Domain.Migrations
 
                     b.HasIndex("HomeTeamId");
 
-                    b.ToTable("Match", "futebol");
+                    b.ToTable("Match", "dbo");
                 });
 
             modelBuilder.Entity("GerenciadorCampeonatos.Domain.Entities.Player", b =>
@@ -111,7 +114,7 @@ namespace GerenciadorCampeonatos.Domain.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Player", "futebol");
+                    b.ToTable("Player", "dbo");
                 });
 
             modelBuilder.Entity("GerenciadorCampeonatos.Domain.Entities.Team", b =>
@@ -147,7 +150,7 @@ namespace GerenciadorCampeonatos.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Team", "futebol");
+                    b.ToTable("Team", "dbo");
                 });
 
             modelBuilder.Entity("MatchPlayer", b =>
@@ -162,7 +165,7 @@ namespace GerenciadorCampeonatos.Domain.Migrations
 
                     b.HasIndex("Player_Id");
 
-                    b.ToTable("MatchPlayer", "futebol");
+                    b.ToTable("MatchPlayer", "dbo");
                 });
 
             modelBuilder.Entity("GerenciadorCampeonatos.Domain.Entities.Match", b =>
