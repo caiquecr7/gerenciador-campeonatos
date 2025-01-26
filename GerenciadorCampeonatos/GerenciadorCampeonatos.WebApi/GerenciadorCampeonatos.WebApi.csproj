@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GerenciadorCampeonatos.Application\GerenciadorCampeonatos.Application.csproj" />
     <ProjectReference Include="..\GerenciadorCampeonatos.Domain\GerenciadorCampeonatos.Domain.csproj" />
   </ItemGroup>
 
