@@ -1,8 +1,7 @@
 ﻿using GerenciadorCampeonatos.Domain.Database;
 using GerenciadorCampeonatos.Domain.Entities;
 using GerenciadorCampeonatos.Domain.Interfaces.Services;
-using GerenciadorCampeonatos.Domain.Models.TeamModels;
-using GerenciadorCampeonatos.WebApi.Models.TeamModels;
+using GerenciadorCampeonatos.Domain.Requests.TeamRequests;
 using Microsoft.EntityFrameworkCore;
 
 namespace GerenciadorCampeonatos.Application.Services;
@@ -16,7 +15,7 @@ public class TeamService : ITeamService
         _context = context;
     }
 
-    public async Task<Team> Create(IncludeTeamModel teamModel)
+    public async Task<Team> Create(IncludeTeamRequest teamModel)
     {
         var team = teamModel.ToEntity();
 
@@ -36,7 +35,7 @@ public class TeamService : ITeamService
         return await _context.Teams.ToListAsync();
     }
 
-    public async Task<bool> Update(int id, UpdateTeamModel updatedTeam)
+    public async Task<bool> Update(int id, UpdateTeamRequest updatedTeam)
     {
         var existingTeam = await _context.Teams.FindAsync(id);
         if (existingTeam == null)

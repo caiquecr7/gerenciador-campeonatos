@@ -1,5 +1,5 @@
 ﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
-using GerenciadorCampeonatos.Domain.Models.PlayerModels;
+using GerenciadorCampeonatos.Domain.Requests.PlayerRequests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorCampeonatos.WebApi.Controllers;
@@ -21,7 +21,7 @@ public class PlayerController : ControllerBase
     /// <param name="playerModel">Object containing the information of the player to be created</param>
     /// <returns>The player created or validation errors</returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] IncludePlayerModel playerModel)
+    public async Task<IActionResult> Create([FromBody] IncludePlayerRequest playerModel)
     {
         try
         {
@@ -30,10 +30,11 @@ public class PlayerController : ControllerBase
 
             var createdPlayer = await _playerService.Create(playerModel);
 
-            if (createdPlayer == null)
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating player.");
-
             return CreatedAtAction(nameof(GetById), new { id = createdPlayer.Id }, createdPlayer);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -89,7 +90,7 @@ public class PlayerController : ControllerBase
     /// <param name="updatedPlayer">Updated player</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdatePlayerModel updatedPlayer)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdatePlayerRequest updatedPlayer)
     {
         try
         {
@@ -101,6 +102,10 @@ public class PlayerController : ControllerBase
                 return NotFound(new { Message = "Player not found" });
 
             return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
         }
         catch (Exception ex)
         {

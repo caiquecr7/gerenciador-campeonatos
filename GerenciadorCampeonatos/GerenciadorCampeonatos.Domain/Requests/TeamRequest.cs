@@ -1,9 +1,8 @@
-﻿using GerenciadorCampeonatos.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace GerenciadorCampeonatos.Domain.Models.TeamModels;
+namespace GerenciadorCampeonatos.Domain.Requests;
 
-public class UpdateTeamModel
+public class TeamRequest
 {
     [Required]
     [StringLength(100, MinimumLength = 2, ErrorMessage = "Team name must be between 2 and 100 characters long.")]
@@ -16,12 +15,4 @@ public class UpdateTeamModel
     [Required]
     [Range(1800, 2100, ErrorMessage = "The year of foundation must be valid.")]
     public int FoundationYear { get; set; }
-
-    public void UpdateEntity(Team team)
-    {
-        team.Name = Name;
-        team.City = City;
-        team.FoundationYear = FoundationYear;
-        team.UpdatedAt = DateTime.Now;
-    }
 }
