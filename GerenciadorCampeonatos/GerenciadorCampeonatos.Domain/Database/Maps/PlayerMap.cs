@@ -14,7 +14,7 @@ public class PlayerMap : IEntityTypeConfiguration<Player>
 
         builder.Property(x => x.Id).HasColumnName("Id").IsRequired();
         builder.Property(x => x.Name).HasColumnName("Name").IsRequired();
-        builder.Property(x => x.BirthDate).HasColumnName("Birth_Date").IsRequired();
+        builder.Property(x => x.Age).HasColumnName("Age").IsRequired();
         builder.Property(x => x.CreatedAt).HasColumnName("Created_At").IsRequired();
         builder.Property(x => x.UpdatedAt).HasColumnName("Updated_At");
 

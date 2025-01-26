@@ -6,15 +6,15 @@ namespace GerenciadorCampeonatos.Domain.Models.TeamModels;
 public class UpdateTeamModel
 {
     [Required]
-    [StringLength(100, MinimumLength = 2, ErrorMessage = "O nome do time deve ter entre 2 e 100 caracteres.")]
+    [StringLength(100, MinimumLength = 2, ErrorMessage = "Team name must be between 2 and 100 characters long.")]
     public string Name { get; set; }
 
     [Required]
-    [StringLength(50, MinimumLength = 3, ErrorMessage = "A cidade deve ter entre 3 e 50 caracteres.")]
+    [StringLength(50, MinimumLength = 3, ErrorMessage = "The city must be between 3 and 50 characters long.")]
     public string City { get; set; }
 
     [Required]
-    [Range(1800, 2100, ErrorMessage = "O ano de fundação deve ser válido.")]
+    [Range(1800, 2100, ErrorMessage = "The year of foundation must be valid.")]
     public int FoundationYear { get; set; }
 
     public void UpdateEntity(Team team)
@@ -22,5 +22,6 @@ public class UpdateTeamModel
         team.Name = Name;
         team.City = City;
         team.FoundationYear = FoundationYear;
+        team.UpdatedAt = DateTime.Now;
     }
 }

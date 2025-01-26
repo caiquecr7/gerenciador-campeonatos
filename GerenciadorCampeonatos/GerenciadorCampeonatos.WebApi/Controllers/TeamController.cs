@@ -90,7 +90,7 @@ public class TeamController : ControllerBase
     /// <param name="updatedTeam">Updated team</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTeam(int id, [FromBody] UpdateTeamModel updatedTeam)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateTeamModel updatedTeam)
     {
         try
         {
