@@ -1,8 +1,5 @@
 ﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Models.PlayerModels;
-using GerenciadorCampeonatos.Domain.Models.TeamModels;
-using GerenciadorCampeonatos.WebApi.Models.TeamModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorCampeonatos.WebApi.Controllers;
