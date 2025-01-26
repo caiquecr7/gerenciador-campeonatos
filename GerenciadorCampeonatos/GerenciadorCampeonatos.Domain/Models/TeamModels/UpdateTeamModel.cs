@@ -1,9 +1,9 @@
 ﻿using GerenciadorCampeonatos.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace GerenciadorCampeonatos.WebApi.Models.TeamModels;
+namespace GerenciadorCampeonatos.Domain.Models.TeamModels;
 
-public class IncludeTeamModel
+public class UpdateTeamModel
 {
     [Required]
     [StringLength(100, MinimumLength = 2, ErrorMessage = "O nome do time deve ter entre 2 e 100 caracteres.")]
@@ -17,13 +17,10 @@ public class IncludeTeamModel
     [Range(1800, 2100, ErrorMessage = "O ano de fundação deve ser válido.")]
     public int FoundationYear { get; set; }
 
-    public Team ToEntity()
+    public void UpdateEntity(Team team)
     {
-        return new Team()
-        {
-            Name = Name,
-            City = City,
-            FoundationYear = FoundationYear
-        };
+        team.Name = Name;
+        team.City = City;
+        team.FoundationYear = FoundationYear;
     }
 }
