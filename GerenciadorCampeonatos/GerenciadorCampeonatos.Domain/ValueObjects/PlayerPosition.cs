@@ -1,4 +1,6 @@
-﻿namespace GerenciadorCampeonatos.Domain.ValueObjects
+﻿using FluentResults;
+
+namespace GerenciadorCampeonatos.Domain.ValueObjects
 {
     public record PlayerPosition
     {
@@ -18,6 +20,10 @@
         private const string StrikerCode = "ST";
         private const string StrikerDescription = "Striker";
 
+        public static readonly PlayerPosition NotDefined = new(NotDefinedCode);
+        private const string NotDefinedCode = "";
+        private const string NotDefinedDescription = "Not Defined";
+
         public string Code { get; init; }
 
         public string Description => Code switch
@@ -26,6 +32,7 @@
             DefenderCode => DefenderDescription,
             MidfielderCode => MidfielderDescription,
             StrikerCode => StrikerDescription,
+            NotDefinedCode => NotDefinedCode,
             _ => string.Empty
         };
 
@@ -38,5 +45,21 @@
         public override string ToString() => Description;
 
         public static implicit operator string(PlayerPosition position) => position.ToString();
+
+        public static Result<PlayerPosition> TryParse(string codigo)
+        {
+            return codigo switch
+            {
+                GoalkeeperCode => Goalkeeper,
+                GoalkeeperDescription => Goalkeeper,
+                DefenderCode => Defender,
+                DefenderDescription => Defender,
+                MidfielderCode => Midfielder,
+                MidfielderDescription => Midfielder,
+                StrikerCode => Striker,
+                StrikerDescription => Striker,
+                _ => NotDefined
+            };
+        }
     }
 }
