@@ -1,5 +1,5 @@
 ﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
-using GerenciadorCampeonatos.Domain.Models.MatchModels;
+using GerenciadorCampeonatos.Domain.Requests.MatchRequests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorCampeonatos.WebApi.Controllers;
@@ -21,7 +21,7 @@ public class MatchController : ControllerBase
     /// <param name="MatchModel">Object containing the information of the Match to be created</param>
     /// <returns>The Match created or validation errors</returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] IncludeMatchModel MatchModel)
+    public async Task<IActionResult> Create([FromBody] IncludeMatchRequest MatchModel)
     {
         try
         {
@@ -30,10 +30,11 @@ public class MatchController : ControllerBase
 
             var createdMatch = await _matchService.Create(MatchModel);
 
-            if (createdMatch == null)
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating Match.");
-
             return CreatedAtAction(nameof(GetById), new { id = createdMatch.Id }, createdMatch);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
         }
         catch (Exception ex)
         {
@@ -89,7 +90,7 @@ public class MatchController : ControllerBase
     /// <param name="updatedMatch">Updated Match</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateMatchModel updatedMatch)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateMatchRequest updatedMatch)
     {
         try
         {
@@ -101,6 +102,10 @@ public class MatchController : ControllerBase
                 return NotFound(new { Message = "Match not found" });
 
             return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
         }
         catch (Exception ex)
         {

@@ -1,7 +1,8 @@
 ﻿using GerenciadorCampeonatos.Domain.Database;
 using GerenciadorCampeonatos.Domain.Entities;
 using GerenciadorCampeonatos.Domain.Interfaces.Services;
-using GerenciadorCampeonatos.Domain.Models.PlayerModels;
+using GerenciadorCampeonatos.Domain.Requests;
+using GerenciadorCampeonatos.Domain.Requests.PlayerRequests;
 using Microsoft.EntityFrameworkCore;
 
 namespace GerenciadorCampeonatos.Application.Services;
@@ -15,8 +16,10 @@ public class PlayerService : IPlayerService
         _context = context;
     }
 
-    public async Task<Player> Create(IncludePlayerModel playerModel)
+    public async Task<Player> Create(IncludePlayerRequest playerModel)
     {
+        await ValidateTeamInRequest(playerModel);
+
         var player = playerModel.ToEntity();
 
         _context.Players.Add(player);
@@ -35,11 +38,13 @@ public class PlayerService : IPlayerService
         return await _context.Players.ToListAsync();
     }
 
-    public async Task<bool> Update(int id, UpdatePlayerModel updatedPlayer)
+    public async Task<bool> Update(int id, UpdatePlayerRequest updatedPlayer)
     {
         var existingPlayer = await _context.Players.FindAsync(id);
         if (existingPlayer == null)
             return false;
+
+        await ValidateTeamInRequest(updatedPlayer);
 
         updatedPlayer.UpdateEntity(existingPlayer);
 
@@ -59,5 +64,12 @@ public class PlayerService : IPlayerService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    private async Task ValidateTeamInRequest(PlayerRequest request)
+    {
+        var teamExists = await _context.Teams.AnyAsync(t => t.Id == request.TeamId);
+        if (!teamExists)
+            throw new ArgumentException("The team linked to the player does not exist");
     }
 }

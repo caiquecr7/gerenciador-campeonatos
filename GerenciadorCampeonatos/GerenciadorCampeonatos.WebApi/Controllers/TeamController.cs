@@ -1,6 +1,5 @@
 ﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
-using GerenciadorCampeonatos.Domain.Models.TeamModels;
-using GerenciadorCampeonatos.WebApi.Models.TeamModels;
+using GerenciadorCampeonatos.Domain.Requests.TeamRequests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorCampeonatos.WebApi.Controllers;
@@ -22,7 +21,7 @@ public class TeamController : ControllerBase
     /// <param name="teamModel">Object containing the information of the team to be created</param>
     /// <returns>The team created or validation errors</returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] IncludeTeamModel teamModel)
+    public async Task<IActionResult> Create([FromBody] IncludeTeamRequest teamModel)
     {
         try
         {
@@ -90,7 +89,7 @@ public class TeamController : ControllerBase
     /// <param name="updatedTeam">Updated team</param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateTeamModel updatedTeam)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateTeamRequest updatedTeam)
     {
         try
         {

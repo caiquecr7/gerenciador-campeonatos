@@ -1,7 +1,8 @@
 ﻿using GerenciadorCampeonatos.Domain.Database;
 using GerenciadorCampeonatos.Domain.Entities;
 using GerenciadorCampeonatos.Domain.Interfaces.Services;
-using GerenciadorCampeonatos.Domain.Models.MatchModels;
+using GerenciadorCampeonatos.Domain.Requests;
+using GerenciadorCampeonatos.Domain.Requests.MatchRequests;
 using Microsoft.EntityFrameworkCore;
 
 namespace GerenciadorCampeonatos.Application.Services;
@@ -15,8 +16,10 @@ public class MatchService : IMatchService
         _context = context;
     }
 
-    public async Task<Match> Create(IncludeMatchModel matchModel)
+    public async Task<Match> Create(IncludeMatchRequest matchModel)
     {
+        await ValidateTeamsInRequest(matchModel);
+
         var match = matchModel.ToEntity();
 
         _context.Matches.Add(match);
@@ -35,11 +38,13 @@ public class MatchService : IMatchService
         return await _context.Matches.ToListAsync();
     }
 
-    public async Task<bool> Update(int id, UpdateMatchModel updatedMatch)
+    public async Task<bool> Update(int id, UpdateMatchRequest updatedMatch)
     {
         var existingMatch = await _context.Matches.FindAsync(id);
         if (existingMatch == null)
             return false;
+
+        await ValidateTeamsInRequest(updatedMatch);
 
         updatedMatch.UpdateEntity(existingMatch);
 
@@ -59,5 +64,16 @@ public class MatchService : IMatchService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    private async Task ValidateTeamsInRequest(MatchRequest request)
+    {
+        var homeTeamExists = await _context.Teams.AnyAsync(t => t.Id == request.HomeTeamId);
+        if (!homeTeamExists)
+            throw new ArgumentException($"The home team linked to the match does not exist");
+
+        var awayTeamExists = await _context.Teams.AnyAsync(t => t.Id == request.AwayTeamId);
+        if (!awayTeamExists)
+            throw new ArgumentException($"The away team linked to the match does not exist");
     }
 }

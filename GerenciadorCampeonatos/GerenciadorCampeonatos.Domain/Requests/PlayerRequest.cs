@@ -1,11 +1,9 @@
 ﻿using GerenciadorCampeonatos.Domain.Attributes;
-using GerenciadorCampeonatos.Domain.Entities;
-using GerenciadorCampeonatos.Domain.ValueObjects;
 using System.ComponentModel.DataAnnotations;
 
-namespace GerenciadorCampeonatos.Domain.Models.PlayerModels;
+namespace GerenciadorCampeonatos.Domain.Requests;
 
-public class IncludePlayerModel
+public class PlayerRequest
 {
     [Required]
     [StringLength(100, MinimumLength = 2, ErrorMessage = "Player name must be between 2 and 100 characters long.")]
@@ -22,16 +20,4 @@ public class IncludePlayerModel
     [Required]
     [Range(1, int.MaxValue, ErrorMessage = "The team id must be valid.")]
     public int TeamId { get; set; }
-
-    public Player ToEntity()
-    {
-        var valuePosition = PlayerPosition.TryParse(Position);
-        return new Player()
-        {
-            Name = Name,
-            Position = valuePosition.Value,
-            Age = Age,
-            TeamId = TeamId
-        };
-    }
 }
