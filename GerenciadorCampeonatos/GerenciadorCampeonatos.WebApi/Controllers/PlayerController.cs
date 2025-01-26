@@ -1,9 +1,11 @@
 ﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Requests.PlayerRequests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorCampeonatos.WebApi.Controllers;
 
+[Authorize]
 [Route("[controller]")]
 [ApiController]
 public class PlayerController : ControllerBase
