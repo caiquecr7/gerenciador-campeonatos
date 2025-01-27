@@ -1,10 +1,12 @@
 ﻿using GerenciadorCampeonatos.Domain.Database.Maps;
 using GerenciadorCampeonatos.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GerenciadorCampeonatos.Domain.Database
 {
-    public class CampeonatosDbContext : DbContext
+    public class CampeonatosDbContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<Match> Matches { get; set; }
         public DbSet<Player> Players { get; set; }
