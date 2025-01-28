@@ -3,14 +3,11 @@ using GerenciadorCampeonatos.Domain.Entities;
 using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Requests;
 using GerenciadorCampeonatos.Domain.Requests.PlayerRequests;
-using GerenciadorCampeonatos.Domain.Requests.TeamRequests;
-using GerenciadorCampeonatos.Domain.Results.TeamResults;
 using GerenciadorCampeonatos.Domain.Results;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Reflection;
 using GerenciadorCampeonatos.Domain.Results.PlayerResults;
 using GerenciadorCampeonatos.Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace GerenciadorCampeonatos.Application.Services;
 
@@ -120,7 +117,7 @@ public class PlayerService : IPlayerService
     {
         if (!string.IsNullOrEmpty(request.OrderBy))
         {
-            var propertyInfo = typeof(Team).GetProperty(request.OrderBy,
+            var propertyInfo = typeof(Player).GetProperty(request.OrderBy,
                 BindingFlags.IgnoreCase |
                 BindingFlags.Public |
                 BindingFlags.Instance);

@@ -3,7 +3,10 @@ using GerenciadorCampeonatos.Domain.Entities;
 using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Requests;
 using GerenciadorCampeonatos.Domain.Requests.MatchRequests;
+using GerenciadorCampeonatos.Domain.Results;
+using GerenciadorCampeonatos.Domain.Results.MatchResults;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace GerenciadorCampeonatos.Application.Services;
 
@@ -75,5 +78,61 @@ public class MatchService : IMatchService
         var awayTeamExists = await _context.Teams.AnyAsync(t => t.Id == request.AwayTeamId);
         if (!awayTeamExists)
             throw new ArgumentException($"The away team linked to the match does not exist");
+    }
+
+    public async Task<PagedResult<MatchResult>> Search(SearchMatchRequest request)
+    {
+        var query = _context.Matches
+            .Include(m => m.HomeTeam)
+            .Include(m => m.AwayTeam)
+            .AsQueryable();
+
+        query = ApplyFilters(query, request);
+        query = ApplyOrdening(query, request);
+
+        var modelQuery = query.Select(match => MatchResult.FromEntity(match));
+        var paginatedResult = await PagedResult<MatchResult>.CreateAsync(modelQuery, request.Page, request.PageSize);
+
+        return paginatedResult;
+    }
+
+    private IQueryable<Match> ApplyFilters(IQueryable<Match> query, SearchMatchRequest request)
+    {
+        if(request.HomeTeamId.HasValue)
+            query = query.Where(t => t.HomeTeamId == request.HomeTeamId);
+
+        if(request.AwayTeamId.HasValue)
+            query = query.Where(t => t.AwayTeamId == request.AwayTeamId);
+
+        if(request.Date.HasValue)
+            query = query.Where(t => t.Date == request.Date);
+
+        if(request.GoalsHomeTeam.HasValue)
+            query = query.Where(t => t.GoalsHomeTeam == request.GoalsHomeTeam);
+
+        if (request.GoalsAwayTeam.HasValue)
+            query = query.Where(t => t.GoalsAwayTeam == request.GoalsAwayTeam);
+
+        return query;
+    }
+
+    private IQueryable<Match> ApplyOrdening(IQueryable<Match> query, SearchMatchRequest request)
+    {
+        if (!string.IsNullOrEmpty(request.OrderBy))
+        {
+            var propertyInfo = typeof(Match).GetProperty(request.OrderBy,
+                BindingFlags.IgnoreCase |
+                BindingFlags.Public |
+                BindingFlags.Instance);
+
+            if (propertyInfo != null)
+            {
+                query = request.OrderByAscending
+                    ? query.OrderBy(e => EF.Property<object>(e, propertyInfo.Name))
+                    : query.OrderByDescending(e => EF.Property<object>(e, propertyInfo.Name));
+            }
+        }
+
+        return query;
     }
 }
