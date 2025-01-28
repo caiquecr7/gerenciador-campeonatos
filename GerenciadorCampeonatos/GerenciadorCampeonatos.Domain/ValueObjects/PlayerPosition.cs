@@ -58,7 +58,7 @@ namespace GerenciadorCampeonatos.Domain.ValueObjects
                 MidfielderDescription => Midfielder,
                 StrikerCode => Striker,
                 StrikerDescription => Striker,
-                _ => NotDefined
+                _ => Result.Fail<PlayerPosition>($"Invalid player position: {codigo}")
             };
         }
     }

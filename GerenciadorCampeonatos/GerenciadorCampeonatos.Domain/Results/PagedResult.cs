@@ -1,4 +1,6 @@
-﻿namespace GerenciadorCampeonatos.Domain.Results
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace GerenciadorCampeonatos.Domain.Results
 {
     public class PagedResult<T>
     {
@@ -21,8 +23,8 @@
             pageIndex = NormalizePageIndex(pageIndex);
             pageSize = NormalizePageSize(pageSize);
 
-            var count = source.Count();
-            var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var count = await source.CountAsync();
+            var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PagedResult<T>(items, count, pageIndex, pageSize);
         }
 

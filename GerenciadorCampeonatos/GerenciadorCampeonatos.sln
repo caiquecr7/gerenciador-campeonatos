@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadorCampeonatos.Web", "GerenciadorCampeonatos.Web\GerenciadorCampeonatos.Web.csproj", "{D1603118-A3BB-4615-AFDA-184E3197A39D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadorCampeonatos.WebApi", "GerenciadorCampeonatos.WebApi\GerenciadorCampeonatos.WebApi.csproj", "{BC1D73E6-92A5-47D5-AD27-DE46C941192C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadorCampeonatos.Domain", "GerenciadorCampeonatos.Domain\GerenciadorCampeonatos.Domain.csproj", "{8E1EB2D6-A9EE-47E0-A97A-89E7E068A0FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerenciadorCampeonatos.Application", "GerenciadorCampeonatos.Application\GerenciadorCampeonatos.Application.csproj", "{ABD5AFC1-5375-402C-9459-2E4F53394B18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadorCampeonatos.Application", "GerenciadorCampeonatos.Application\GerenciadorCampeonatos.Application.csproj", "{ABD5AFC1-5375-402C-9459-2E4F53394B18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D1603118-A3BB-4615-AFDA-184E3197A39D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1603118-A3BB-4615-AFDA-184E3197A39D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1603118-A3BB-4615-AFDA-184E3197A39D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1603118-A3BB-4615-AFDA-184E3197A39D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC1D73E6-92A5-47D5-AD27-DE46C941192C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC1D73E6-92A5-47D5-AD27-DE46C941192C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC1D73E6-92A5-47D5-AD27-DE46C941192C}.Release|Any CPU.ActiveCfg = Release|Any CPU
