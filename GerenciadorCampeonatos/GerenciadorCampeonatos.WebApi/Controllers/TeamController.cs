@@ -11,10 +11,11 @@ namespace GerenciadorCampeonatos.WebApi.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-[SwaggerResponse(StatusCodes.Status400BadRequest)]
-[SwaggerResponse(StatusCodes.Status409Conflict)]
-[SwaggerResponse(StatusCodes.Status500InternalServerError)]
-[SwaggerResponse(StatusCodes.Status503ServiceUnavailable)]
+[SwaggerResponse(StatusCodes.Status400BadRequest, "The request is invalid.")]
+[SwaggerResponse(StatusCodes.Status401Unauthorized, "Your token has expired or you have not entered one.")]
+[SwaggerResponse(StatusCodes.Status409Conflict, "A conflict occurred while processing the request.")]
+[SwaggerResponse(StatusCodes.Status500InternalServerError, "An internal server error occurred.")]
+[SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "The service is unavailable.")]
 public class TeamController : ControllerBase
 {
     private readonly ITeamService _teamService;
@@ -24,12 +25,9 @@ public class TeamController : ControllerBase
         _teamService = teamService;
     }
 
-    /// <summary>
-    /// Create a new team
-    /// </summary>
-    /// <param name="teamModel">Object containing the information of the team to be created</param>
-    /// <returns>The team created or validation errors</returns>
     [HttpPost]
+    [SwaggerOperation(Summary = "Create a new team", Description = "Creates a new team with the specified details.")]
+    [SwaggerResponse(StatusCodes.Status201Created, "The team was created successfully.", typeof(TeamResult))]
     public async Task<IActionResult> Create([FromBody] IncludeTeamRequest teamModel)
     {
         try
@@ -50,12 +48,10 @@ public class TeamController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Returns a team by ID
-    /// </summary>
-    /// <param name="id">Team Id</param>
-    /// <returns>The team found or error 404 if it does not exist</returns>
     [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get a team by ID", Description = "Retrieves the details of a team using its unique ID.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The team was retrieved successfully.", typeof(TeamResult))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The team with the specified ID was not found.")]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -73,11 +69,9 @@ public class TeamController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Returns all teams
-    /// </summary>
-    /// <returns>All teams presents on database</returns>
     [HttpGet]
+    [SwaggerOperation(Summary = "Get all teams", Description = "Retrieves a list of all teams available in the database.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The list of teams was retrieved successfully.", typeof(IEnumerable<TeamResult>))]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -91,9 +85,16 @@ public class TeamController : ControllerBase
         }
     }
 
-    [SwaggerOperation(Summary = "Update a team")]
-    [SwaggerResponse(StatusCodes.Status200OK)]
+    /// <summary>
+    /// Update a team
+    /// </summary>
+    /// <param name="id">Team to be updated</param>
+    /// <param name="updatedTeam">Updated team</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update a team", Description = "Updates the details of a team with the specified ID.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "The team was updated successfully.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The team with the specified ID was not found.")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateTeamRequest updatedTeam)
     {
         try
@@ -113,9 +114,9 @@ public class TeamController : ControllerBase
         }
     }
 
-    [SwaggerOperation(Summary = "Get teams result with pagination, filtering and sorting")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(TeamResult[]))]
     [HttpGet("search")]
+    [SwaggerOperation(Summary = "Search for teams", Description = "Searches for teams based on filters, sorting, and pagination.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The search results were retrieved successfully.", typeof(IEnumerable<TeamResult>))]
     public async Task<IActionResult> Search([FromQuery] SearchTeamRequest searchRequest)
     {
         try

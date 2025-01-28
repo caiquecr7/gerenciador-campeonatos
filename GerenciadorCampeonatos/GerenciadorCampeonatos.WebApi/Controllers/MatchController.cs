@@ -1,9 +1,6 @@
-﻿using GerenciadorCampeonatos.Application.Services;
-using GerenciadorCampeonatos.Domain.Interfaces.Services;
+﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Requests.MatchRequests;
-using GerenciadorCampeonatos.Domain.Requests.TeamRequests;
 using GerenciadorCampeonatos.Domain.Results.MatchResults;
-using GerenciadorCampeonatos.Domain.Results.TeamResults;
 using GerenciadorCampeonatos.WebApi.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +9,13 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace GerenciadorCampeonatos.WebApi.Controllers;
 
 [Authorize]
-[Route("[controller]")]
 [ApiController]
+[Route("[controller]")]
+[SwaggerResponse(StatusCodes.Status400BadRequest, "The request is invalid.")]
+[SwaggerResponse(StatusCodes.Status401Unauthorized, "Your token has expired or you have not entered one.")]
+[SwaggerResponse(StatusCodes.Status409Conflict, "A conflict occurred while processing the request.")]
+[SwaggerResponse(StatusCodes.Status500InternalServerError, "An internal server error occurred.")]
+[SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "The service is unavailable.")]
 public class MatchController : ControllerBase
 {
     private readonly IMatchService _matchService;
@@ -23,12 +25,9 @@ public class MatchController : ControllerBase
         _matchService = MatchService;
     }
 
-    /// <summary>
-    /// Create a new Match
-    /// </summary>
-    /// <param name="MatchModel">Object containing the information of the Match to be created</param>
-    /// <returns>The Match created or validation errors</returns>
     [HttpPost]
+    [SwaggerOperation(Summary = "Create a new match", Description = "Creates a new match with the specified details.")]
+    [SwaggerResponse(StatusCodes.Status201Created, "The match was created successfully.", typeof(MatchResult))]
     public async Task<IActionResult> Create([FromBody] IncludeMatchRequest MatchModel)
     {
         try
@@ -50,12 +49,10 @@ public class MatchController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Returns a Match by ID
-    /// </summary>
-    /// <param name="id">Match Id</param>
-    /// <returns>The Match found or error 404 if it does not exist</returns>
     [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get a match by ID", Description = "Retrieves the details of a match using its unique ID.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The match was retrieved successfully.", typeof(MatchResult))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The match with the specified ID was not found.")]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -73,11 +70,9 @@ public class MatchController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Returns all Matchs
-    /// </summary>
-    /// <returns>All Matchs presents on database</returns>
     [HttpGet]
+    [SwaggerOperation(Summary = "Get all matches", Description = "Retrieves a list of all matches available in the database.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The list of matches was retrieved successfully.", typeof(IEnumerable<MatchResult>))]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -91,13 +86,10 @@ public class MatchController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update a Match
-    /// </summary>
-    /// <param name="id">Match to be updated</param>
-    /// <param name="updatedMatch">Updated Match</param>
-    /// <returns></returns>
     [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update a match", Description = "Updates the details of a match with the specified ID.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "The match was updated successfully.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The match with the specified ID was not found.")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateMatchRequest updatedMatch)
     {
         try
@@ -121,9 +113,9 @@ public class MatchController : ControllerBase
         }
     }
 
-    [SwaggerOperation(Summary = "Get matches result with pagination, filtering and sorting")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(MatchResult[]))]
     [HttpGet("search")]
+    [SwaggerOperation(Summary = "Search matches", Description = "Searches for matches based on filters, sorting, and pagination.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The search results were retrieved successfully.", typeof(IEnumerable<MatchResult>))]
     public async Task<IActionResult> Search([FromQuery] SearchMatchRequest searchRequest)
     {
         try

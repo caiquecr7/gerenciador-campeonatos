@@ -1,9 +1,6 @@
-﻿using GerenciadorCampeonatos.Application.Services;
-using GerenciadorCampeonatos.Domain.Interfaces.Services;
+﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Requests.PlayerRequests;
-using GerenciadorCampeonatos.Domain.Requests.TeamRequests;
 using GerenciadorCampeonatos.Domain.Results.PlayerResults;
-using GerenciadorCampeonatos.Domain.Results.TeamResults;
 using GerenciadorCampeonatos.WebApi.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +11,11 @@ namespace GerenciadorCampeonatos.WebApi.Controllers;
 [Authorize]
 [Route("[controller]")]
 [ApiController]
+[SwaggerResponse(StatusCodes.Status400BadRequest, "The request is invalid.")]
+[SwaggerResponse(StatusCodes.Status401Unauthorized, "Your token has expired or you have not entered one.")]
+[SwaggerResponse(StatusCodes.Status409Conflict, "A conflict occurred while processing the request.")]
+[SwaggerResponse(StatusCodes.Status500InternalServerError, "An internal server error occurred.")]
+[SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "The service is unavailable.")]
 public class PlayerController : ControllerBase
 {
     private readonly IPlayerService _playerService;
@@ -23,12 +25,9 @@ public class PlayerController : ControllerBase
         _playerService = playerService;
     }
 
-    /// <summary>
-    /// Create a new player
-    /// </summary>
-    /// <param name="playerModel">Object containing the information of the player to be created</param>
-    /// <returns>The player created or validation errors</returns>
     [HttpPost]
+    [SwaggerOperation(Summary = "Create a new player")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Player created successfully", typeof(PlayerResult))]
     public async Task<IActionResult> Create([FromBody] IncludePlayerRequest playerModel)
     {
         try
@@ -50,12 +49,9 @@ public class PlayerController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Returns a player by ID
-    /// </summary>
-    /// <param name="id">Player Id</param>
-    /// <returns>The player found or error 404 if it does not exist</returns>
     [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get a player by ID")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Player retrieved successfully", typeof(PlayerResult))]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -73,11 +69,9 @@ public class PlayerController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Returns all players
-    /// </summary>
-    /// <returns>All players presents on database</returns>
     [HttpGet]
+    [SwaggerOperation(Summary = "Get all players")]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of players retrieved successfully", typeof(IEnumerable<PlayerResult>))]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -91,13 +85,9 @@ public class PlayerController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update a player
-    /// </summary>
-    /// <param name="id">Player to be updated</param>
-    /// <param name="updatedPlayer">Updated player</param>
-    /// <returns></returns>
     [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update a player")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Player updated successfully")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdatePlayerRequest updatedPlayer)
     {
         try
@@ -121,9 +111,9 @@ public class PlayerController : ControllerBase
         }
     }
 
-    [SwaggerOperation(Summary = "Get players result with pagination, filtering and sorting")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(PlayerResult[]))]
     [HttpGet("search")]
+    [SwaggerOperation(Summary = "Search players with pagination, filtering, and sorting")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Search results retrieved successfully", typeof(IEnumerable<PlayerResult>))]
     public async Task<IActionResult> Search([FromQuery] SearchPlayerRequest searchRequest)
     {
         try
