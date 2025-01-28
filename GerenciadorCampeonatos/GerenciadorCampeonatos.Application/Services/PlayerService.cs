@@ -32,14 +32,22 @@ public class PlayerService : IPlayerService
         return player;
     }
 
-    public async Task<Player> GetById(int id)
+    public async Task<PlayerResult> GetById(int id)
     {
-        return await _context.Players.FindAsync(id);
+        var player = await _context.Players
+            .Include(x => x.Team)
+            .FirstAsync(x => x.Id == id);
+
+        return PlayerResult.FromEntity(player, player.Team);
     }
 
-    public async Task<List<Player>> GetAll()
+    public async Task<List<PlayerResult>> GetAll()
     {
-        return await _context.Players.ToListAsync();
+        var players = await _context.Players
+            .Include(x => x.Team)
+            .ToListAsync();
+
+        return players.Select(p => PlayerResult.FromEntity(p, p.Team)).ToList();
     }
 
     public async Task<bool> Update(int id, UpdatePlayerRequest updatedPlayer)

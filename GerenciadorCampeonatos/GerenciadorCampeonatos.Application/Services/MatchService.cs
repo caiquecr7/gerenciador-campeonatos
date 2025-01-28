@@ -31,14 +31,24 @@ public class MatchService : IMatchService
         return match;
     }
 
-    public async Task<Match> GetById(int id)
+    public async Task<MatchResult> GetById(int id)
     {
-        return await _context.Matches.FindAsync(id);
+        var match = await _context.Matches
+            .Include(x => x.HomeTeam)
+            .Include(x => x.AwayTeam)
+            .FirstAsync(x => x.Id == id);
+
+        return MatchResult.FromEntity(match);
     }
 
-    public async Task<List<Match>> GetAll()
+    public async Task<List<MatchResult>> GetAll()
     {
-        return await _context.Matches.ToListAsync();
+        var match = await _context.Matches
+            .Include(match => match.HomeTeam)
+            .Include(match => match.AwayTeam)
+            .ToListAsync();
+
+        return match.Select(m => MatchResult.FromEntity(m)).ToList();
     }
 
     public async Task<bool> Update(int id, UpdateMatchRequest updatedMatch)

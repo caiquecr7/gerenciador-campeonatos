@@ -13,9 +13,7 @@ namespace GerenciadorCampeonatos.WebApi.Controllers;
 [Route("[controller]")]
 [SwaggerResponse(StatusCodes.Status400BadRequest, "The request is invalid.")]
 [SwaggerResponse(StatusCodes.Status401Unauthorized, "Your token has expired or you have not entered one.")]
-[SwaggerResponse(StatusCodes.Status409Conflict, "A conflict occurred while processing the request.")]
 [SwaggerResponse(StatusCodes.Status500InternalServerError, "An internal server error occurred.")]
-[SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "The service is unavailable.")]
 public class MatchController : ControllerBase
 {
     private readonly IMatchService _matchService;
@@ -30,23 +28,12 @@ public class MatchController : ControllerBase
     [SwaggerResponse(StatusCodes.Status201Created, "The match was created successfully.", typeof(MatchResult))]
     public async Task<IActionResult> Create([FromBody] IncludeMatchRequest MatchModel)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-            var createdMatch = await _matchService.Create(MatchModel);
+        var createdMatch = await _matchService.Create(MatchModel);
 
-            return CreatedAtAction(nameof(GetById), new { id = createdMatch.Id }, createdMatch);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        return CreatedAtAction(nameof(GetById), new { id = createdMatch.Id }, createdMatch);
     }
 
     [HttpGet("{id}")]
@@ -55,19 +42,12 @@ public class MatchController : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "The match with the specified ID was not found.")]
     public async Task<IActionResult> GetById(int id)
     {
-        try
-        {
-            var Match = await _matchService.GetById(id);
+        var Match = await _matchService.GetById(id);
 
-            if (Match == null)
-                return NotFound($"Match with ID {id} not found");
+        if (Match == null)
+            return NotFound($"Match with ID {id} not found");
 
-            return Ok(Match);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        return Ok(Match);
     }
 
     [HttpGet]
@@ -75,15 +55,8 @@ public class MatchController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "The list of matches was retrieved successfully.", typeof(IEnumerable<MatchResult>))]
     public async Task<IActionResult> GetAll()
     {
-        try
-        {
-            var Matchs = await _matchService.GetAll();
-            return Ok(Matchs);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        var Matchs = await _matchService.GetAll();
+        return Ok(Matchs);
     }
 
     [HttpPut("{id}")]
@@ -92,25 +65,14 @@ public class MatchController : ControllerBase
     [SwaggerResponse(StatusCodes.Status404NotFound, "The match with the specified ID was not found.")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateMatchRequest updatedMatch)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-            var success = await _matchService.Update(id, updatedMatch);
-            if (!success)
-                return NotFound(new { Message = "Match not found" });
+        var success = await _matchService.Update(id, updatedMatch);
+        if (!success)
+            return NotFound(new { Message = "Match not found" });
 
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        return NoContent();
     }
 
     [HttpGet("search")]
@@ -118,15 +80,8 @@ public class MatchController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "The search results were retrieved successfully.", typeof(IEnumerable<MatchResult>))]
     public async Task<IActionResult> Search([FromQuery] SearchMatchRequest searchRequest)
     {
-        try
-        {
-            var result = await _matchService.Search(searchRequest);
-            Response.AddPagedResultHeaders(result);
-            return Ok(result.Data.ToArray());
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        var result = await _matchService.Search(searchRequest);
+        Response.AddPagedResultHeaders(result);
+        return Ok(result.Data.ToArray());
     }
 }

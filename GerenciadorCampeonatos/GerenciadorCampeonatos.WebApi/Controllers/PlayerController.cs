@@ -13,9 +13,7 @@ namespace GerenciadorCampeonatos.WebApi.Controllers;
 [ApiController]
 [SwaggerResponse(StatusCodes.Status400BadRequest, "The request is invalid.")]
 [SwaggerResponse(StatusCodes.Status401Unauthorized, "Your token has expired or you have not entered one.")]
-[SwaggerResponse(StatusCodes.Status409Conflict, "A conflict occurred while processing the request.")]
 [SwaggerResponse(StatusCodes.Status500InternalServerError, "An internal server error occurred.")]
-[SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "The service is unavailable.")]
 public class PlayerController : ControllerBase
 {
     private readonly IPlayerService _playerService;
@@ -30,23 +28,12 @@ public class PlayerController : ControllerBase
     [SwaggerResponse(StatusCodes.Status201Created, "Player created successfully", typeof(PlayerResult))]
     public async Task<IActionResult> Create([FromBody] IncludePlayerRequest playerModel)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-            var createdPlayer = await _playerService.Create(playerModel);
+        var createdPlayer = await _playerService.Create(playerModel);
 
-            return CreatedAtAction(nameof(GetById), new { id = createdPlayer.Id }, createdPlayer);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        return CreatedAtAction(nameof(GetById), new { id = createdPlayer.Id }, createdPlayer);
     }
 
     [HttpGet("{id}")]
@@ -54,19 +41,12 @@ public class PlayerController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Player retrieved successfully", typeof(PlayerResult))]
     public async Task<IActionResult> GetById(int id)
     {
-        try
-        {
-            var player = await _playerService.GetById(id);
+        var player = await _playerService.GetById(id);
 
-            if (player == null)
-                return NotFound($"Player with ID {id} not found");
+        if (player == null)
+            return NotFound($"Player with ID {id} not found");
 
-            return Ok(player);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        return Ok(player);
     }
 
     [HttpGet]
@@ -74,15 +54,8 @@ public class PlayerController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "List of players retrieved successfully", typeof(IEnumerable<PlayerResult>))]
     public async Task<IActionResult> GetAll()
     {
-        try
-        {
-            var players = await _playerService.GetAll();
-            return Ok(players);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        var players = await _playerService.GetAll();
+        return Ok(players);
     }
 
     [HttpPut("{id}")]
@@ -90,25 +63,14 @@ public class PlayerController : ControllerBase
     [SwaggerResponse(StatusCodes.Status204NoContent, "Player updated successfully")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdatePlayerRequest updatedPlayer)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-            var success = await _playerService.Update(id, updatedPlayer);
-            if (!success)
-                return NotFound(new { Message = "Player not found" });
+        var success = await _playerService.Update(id, updatedPlayer);
+        if (!success)
+            return NotFound(new { Message = "Player not found" });
 
-            return NoContent();
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        return NoContent();
     }
 
     [HttpGet("search")]
@@ -116,15 +78,8 @@ public class PlayerController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Search results retrieved successfully", typeof(IEnumerable<PlayerResult>))]
     public async Task<IActionResult> Search([FromQuery] SearchPlayerRequest searchRequest)
     {
-        try
-        {
-            var result = await _playerService.Search(searchRequest);
-            Response.AddPagedResultHeaders(result);
-            return Ok(result.Data.ToArray());
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
-        }
+        var result = await _playerService.Search(searchRequest);
+        Response.AddPagedResultHeaders(result);
+        return Ok(result.Data.ToArray());
     }
 }

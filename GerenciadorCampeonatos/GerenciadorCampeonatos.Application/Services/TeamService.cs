@@ -24,18 +24,21 @@ public class TeamService : ITeamService
 
         _context.Teams.Add(team);
         await _context.SaveChangesAsync();
-
+        
         return team;
     }
 
-    public async Task<Team> GetById(int id)
+    public async Task<TeamResult> GetById(int id)
     {
-        return await _context.Teams.FindAsync(id);
+        var team = await _context.Teams.FindAsync(id);
+        return TeamResult.FromEntity(team);
     }
 
-    public async Task<List<Team>> GetAll()
+    public async Task<List<TeamResult>> GetAll()
     {
-        return await _context.Teams.ToListAsync();
+        var teams = await _context.Teams.ToListAsync();
+        var resultTeams = teams.Select(t => TeamResult.FromEntity(t)).ToList();
+        return resultTeams;
     }
 
     public async Task<bool> Update(int id, UpdateTeamRequest updatedTeam)

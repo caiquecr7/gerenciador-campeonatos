@@ -1,6 +1,7 @@
 using GerenciadorCampeonatos.Application.Services;
 using GerenciadorCampeonatos.Domain.Database;
 using GerenciadorCampeonatos.Domain.Interfaces.Services;
+using GerenciadorCampeonatos.WebApi.ErrorHandling;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -60,6 +61,7 @@ builder.Services.AddScoped<IMatchService, MatchService>();
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 app.MapIdentityApi<IdentityUser>();
 
 app.UseSwagger();
