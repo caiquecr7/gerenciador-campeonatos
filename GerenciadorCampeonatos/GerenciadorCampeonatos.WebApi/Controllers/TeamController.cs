@@ -1,13 +1,20 @@
 ﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Requests.TeamRequests;
+using GerenciadorCampeonatos.Domain.Results.TeamResults;
+using GerenciadorCampeonatos.WebApi.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GerenciadorCampeonatos.WebApi.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("[controller]")]
+[SwaggerResponse(StatusCodes.Status400BadRequest)]
+[SwaggerResponse(StatusCodes.Status409Conflict)]
+[SwaggerResponse(StatusCodes.Status500InternalServerError)]
+[SwaggerResponse(StatusCodes.Status503ServiceUnavailable)]
 public class TeamController : ControllerBase
 {
     private readonly ITeamService _teamService;
@@ -84,12 +91,8 @@ public class TeamController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Update a team
-    /// </summary>
-    /// <param name="id">Team to be updated</param>
-    /// <param name="updatedTeam">Updated team</param>
-    /// <returns></returns>
+    [SwaggerOperation(Summary = "Update a team")]
+    [SwaggerResponse(StatusCodes.Status200OK)]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateTeamRequest updatedTeam)
     {
@@ -103,6 +106,23 @@ public class TeamController : ControllerBase
                 return NotFound(new { Message = "Team not found" });
 
             return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
+        }
+    }
+
+    [SwaggerOperation(Summary = "Get teams result with pagination, filtering and sorting")]
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(TeamResult[]))]
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] SearchTeamRequest searchRequest)
+    {
+        try
+        {
+            var result = await _teamService.Search(searchRequest);
+            Response.AddPagedResultHeaders(result);
+            return Ok(result.Data.ToArray());
         }
         catch (Exception ex)
         {

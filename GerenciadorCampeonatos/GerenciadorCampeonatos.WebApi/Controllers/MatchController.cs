@@ -1,7 +1,13 @@
-﻿using GerenciadorCampeonatos.Domain.Interfaces.Services;
+﻿using GerenciadorCampeonatos.Application.Services;
+using GerenciadorCampeonatos.Domain.Interfaces.Services;
 using GerenciadorCampeonatos.Domain.Requests.MatchRequests;
+using GerenciadorCampeonatos.Domain.Requests.TeamRequests;
+using GerenciadorCampeonatos.Domain.Results.MatchResults;
+using GerenciadorCampeonatos.Domain.Results.TeamResults;
+using GerenciadorCampeonatos.WebApi.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GerenciadorCampeonatos.WebApi.Controllers;
 
@@ -108,6 +114,23 @@ public class MatchController : ControllerBase
         catch (ArgumentException ex)
         {
             return BadRequest(new { Message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, $"Error: {ex.Message}");
+        }
+    }
+
+    [SwaggerOperation(Summary = "Get matches result with pagination, filtering and sorting")]
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(MatchResult[]))]
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] SearchMatchRequest searchRequest)
+    {
+        try
+        {
+            var result = await _matchService.Search(searchRequest);
+            Response.AddPagedResultHeaders(result);
+            return Ok(result.Data.ToArray());
         }
         catch (Exception ex)
         {
