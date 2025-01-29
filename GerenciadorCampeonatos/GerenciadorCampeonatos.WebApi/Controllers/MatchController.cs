@@ -51,12 +51,13 @@ public class MatchController : ControllerBase
     }
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Get all matches", Description = "Retrieves a list of all matches available in the database.")]
-    [SwaggerResponse(StatusCodes.Status200OK, "The list of matches was retrieved successfully.", typeof(IEnumerable<MatchResult>))]
-    public async Task<IActionResult> GetAll()
+    [SwaggerOperation(Summary = "Search matches", Description = "Searches for matches based on filters, sorting, and pagination.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The search results were retrieved successfully.", typeof(IEnumerable<MatchResult>))]
+    public async Task<IActionResult> Search([FromQuery] SearchMatchRequest searchRequest)
     {
-        var Matchs = await _matchService.GetAll();
-        return Ok(Matchs);
+        var result = await _matchService.Search(searchRequest);
+        Response.AddPagedResultHeaders(result);
+        return Ok(result.Data.ToArray());
     }
 
     [HttpPut("{id}")]
@@ -73,16 +74,6 @@ public class MatchController : ControllerBase
             return NotFound(new { Message = "Match not found" });
 
         return NoContent();
-    }
-
-    [HttpGet("search")]
-    [SwaggerOperation(Summary = "Search matches", Description = "Searches for matches based on filters, sorting, and pagination.")]
-    [SwaggerResponse(StatusCodes.Status200OK, "The search results were retrieved successfully.", typeof(IEnumerable<MatchResult>))]
-    public async Task<IActionResult> Search([FromQuery] SearchMatchRequest searchRequest)
-    {
-        var result = await _matchService.Search(searchRequest);
-        Response.AddPagedResultHeaders(result);
-        return Ok(result.Data.ToArray());
     }
 
     [HttpDelete("{id}")]
