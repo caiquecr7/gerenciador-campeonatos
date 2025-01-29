@@ -1,13 +1,14 @@
-﻿using System.Net;
+﻿using Serilog;
+using System.Net;
 using System.Text.Json;
 
 namespace GerenciadorCampeonatos.WebApi.ErrorHandling
 {
-    public class GlobalErrorHandlingMiddleware
+    public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public GlobalErrorHandlingMiddleware(RequestDelegate next)
+        public ErrorHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -20,6 +21,7 @@ namespace GerenciadorCampeonatos.WebApi.ErrorHandling
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "An unhandled exception occurred: {Message}", ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -55,6 +57,8 @@ namespace GerenciadorCampeonatos.WebApi.ErrorHandling
                 Details = exception.Message
             };
 
+            Log.Error("Error {StatusCode}: {Message} - {Details}",
+                      context.Response.StatusCode, message, exception.Message);
             var jsonResponse = JsonSerializer.Serialize(errorResponse);
             return context.Response.WriteAsync(jsonResponse);
         }
