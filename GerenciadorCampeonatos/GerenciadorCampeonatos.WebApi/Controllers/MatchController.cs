@@ -84,4 +84,16 @@ public class MatchController : ControllerBase
         Response.AddPagedResultHeaders(result);
         return Ok(result.Data.ToArray());
     }
+
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Delete a match", Description = "Deletes a match with the specified ID.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "The match was deleted successfully.")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var success = await _matchService.Delete(id);
+        if (!success)
+            return NotFound(new { Message = "Match not found" });
+
+        return NoContent();
+    }
 }

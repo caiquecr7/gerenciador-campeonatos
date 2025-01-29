@@ -82,4 +82,16 @@ public class PlayerController : ControllerBase
         Response.AddPagedResultHeaders(result);
         return Ok(result.Data.ToArray());
     }
+
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Delete a player")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Player deleted successfully")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var success = await _playerService.Delete(id);
+        if (!success)
+            return NotFound(new { Message = "Player not found" });
+
+        return NoContent();
+    }
 }

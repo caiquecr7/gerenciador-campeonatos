@@ -89,4 +89,17 @@ public class TeamController : ControllerBase
         Response.AddPagedResultHeaders(result);
         return Ok(result.Data.ToArray());
     }
+
+
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Delete a team", Description = "Deletes a team with the specified ID.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "The team was deleted successfully.")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var success = await _teamService.Delete(id);
+        if (!success)
+            return NotFound(new { Message = "Team not found" });
+
+        return NoContent();
+    }
 }
