@@ -56,12 +56,13 @@ public class TeamController : ControllerBase
     }
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Get all teams", Description = "Retrieves a list of all teams available in the database.")]
-    [SwaggerResponse(StatusCodes.Status200OK, "The list of teams was retrieved successfully.", typeof(IEnumerable<TeamResult>))]
-    public async Task<IActionResult> GetAll()
+    [SwaggerOperation(Summary = "Search for teams", Description = "Searches for teams based on filters, sorting, and pagination.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The search results were retrieved successfully.", typeof(IEnumerable<TeamResult>))]
+    public async Task<IActionResult> Search([FromQuery] SearchTeamRequest searchRequest)
     {
-        var teams = await _teamService.GetAll();
-        return Ok(teams);
+        var result = await _teamService.Search(searchRequest);
+        Response.AddPagedResultHeaders(result);
+        return Ok(result.Data.ToArray());
     }
 
     [HttpPut("{id}")]
@@ -79,17 +80,6 @@ public class TeamController : ControllerBase
 
         return NoContent();
     }
-
-    [HttpGet("search")]
-    [SwaggerOperation(Summary = "Search for teams", Description = "Searches for teams based on filters, sorting, and pagination.")]
-    [SwaggerResponse(StatusCodes.Status200OK, "The search results were retrieved successfully.", typeof(IEnumerable<TeamResult>))]
-    public async Task<IActionResult> Search([FromQuery] SearchTeamRequest searchRequest)
-    {
-        var result = await _teamService.Search(searchRequest);
-        Response.AddPagedResultHeaders(result);
-        return Ok(result.Data.ToArray());
-    }
-
 
     [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Delete a team", Description = "Deletes a team with the specified ID.")]

@@ -50,12 +50,13 @@ public class PlayerController : ControllerBase
     }
 
     [HttpGet]
-    [SwaggerOperation(Summary = "Get all players")]
-    [SwaggerResponse(StatusCodes.Status200OK, "List of players retrieved successfully", typeof(IEnumerable<PlayerResult>))]
-    public async Task<IActionResult> GetAll()
+    [SwaggerOperation(Summary = "Search players with pagination, filtering, and sorting")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Search results retrieved successfully", typeof(IEnumerable<PlayerResult>))]
+    public async Task<IActionResult> Search([FromQuery] SearchPlayerRequest searchRequest)
     {
-        var players = await _playerService.GetAll();
-        return Ok(players);
+        var result = await _playerService.Search(searchRequest);
+        Response.AddPagedResultHeaders(result);
+        return Ok(result.Data.ToArray());
     }
 
     [HttpPut("{id}")]
@@ -71,16 +72,6 @@ public class PlayerController : ControllerBase
             return NotFound(new { Message = "Player not found" });
 
         return NoContent();
-    }
-
-    [HttpGet("search")]
-    [SwaggerOperation(Summary = "Search players with pagination, filtering, and sorting")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Search results retrieved successfully", typeof(IEnumerable<PlayerResult>))]
-    public async Task<IActionResult> Search([FromQuery] SearchPlayerRequest searchRequest)
-    {
-        var result = await _playerService.Search(searchRequest);
-        Response.AddPagedResultHeaders(result);
-        return Ok(result.Data.ToArray());
     }
 
     [HttpDelete("{id}")]
